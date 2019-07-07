@@ -25,8 +25,17 @@ GPIO.setup(Motor2A,GPIO.OUT)
 GPIO.setup(Motor2B,GPIO.OUT)
 GPIO.setup(Motor2E,GPIO.OUT)
 
-def forward1(dur):
+# Setting up LEDs
+leftRED=16
+WHITE=18
+rightRED=22
+GPIO.setup(leftRED,GPIO.OUT)
+GPIO.setup(WHITE,GPIO.OUT)
+GPIO.setup(rightRED,GPIO.OUT)
+
+def backward1(dur):
     print("Moving Forward")
+    GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.HIGH)
@@ -34,12 +43,15 @@ def forward1(dur):
     GPIO.output(Motor2B,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.HIGH)
     sleep(dur)
-    GPIO.output(Motor1E,GPIO.LOW)
-    GPIO.output(Motor2E,GPIO.LOW)
+    GPIO.output(WHITE,GPIO.LOW)
+    stopMotors()
     return
 
-def forward2():
+def backward2():
     print("Moving Forward")
+    GPIO.output(WHITE,GPIO.HIGH)
+    GPIO.output(leftRED,GPIO.LOW)
+    GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.HIGH)
@@ -47,8 +59,9 @@ def forward2():
     GPIO.output(Motor2B,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.HIGH)
 
-def backward1(dur):
+def forward1(dur):
     print("Moving Backward")
+    GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(Motor1A,GPIO.LOW)
     GPIO.output(Motor1B,GPIO.HIGH)
     GPIO.output(Motor1E,GPIO.HIGH)
@@ -56,11 +69,15 @@ def backward1(dur):
     GPIO.output(Motor2B,GPIO.LOW)
     GPIO.output(Motor2E,GPIO.HIGH)
     sleep(dur)
+    GPIO.output(WHITE,GPIO.LOW)
     stopMotors()
     return
     
-def backward2():
+def forward2():
     print("Moving Backward")
+    GPIO.output(WHITE,GPIO.HIGH)
+    GPIO.output(leftRED,GPIO.LOW)
+    GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(Motor1A,GPIO.LOW)
     GPIO.output(Motor1B,GPIO.HIGH)
     GPIO.output(Motor1E,GPIO.HIGH)
@@ -70,15 +87,20 @@ def backward2():
 
 def turnRight1(dur):
     print("Turning Right")
+    GPIO.output(rightRED,GPIO.HIGH)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.HIGH)
     sleep(dur)
+    GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.LOW)
     return
     
 def turnRight2():
     print("Turning Right")
+    GPIO.output(rightRED,GPIO.HIGH)
+    GPIO.output(WHITE,GPIO.LOW)
+    GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(Motor2E,GPIO.LOW)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
@@ -86,15 +108,20 @@ def turnRight2():
 
 def turnLeft1(dur):
     print("Turning Left")
+    GPIO.output(leftRED,GPIO.HIGH)
     GPIO.output(Motor2A,GPIO.LOW)
     GPIO.output(Motor2B,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.HIGH)
     sleep(dur)
+    GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(Motor2E,GPIO.LOW)
     return
     
 def turnLeft2():
     print("Turning Left")
+    GPIO.output(leftRED,GPIO.HIGH)
+    GPIO.output(WHITE,GPIO.LOW)
+    GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.LOW)
     GPIO.output(Motor2A,GPIO.LOW)
     GPIO.output(Motor2B,GPIO.HIGH)
