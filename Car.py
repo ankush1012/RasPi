@@ -25,6 +25,9 @@ GPIO.setup(Motor2A,GPIO.OUT)
 GPIO.setup(Motor2B,GPIO.OUT)
 GPIO.setup(Motor2E,GPIO.OUT)
 
+pwm1=GPIO.PWM(35,100)
+pwm2=GPIO.PWM(11,100)
+
 # Setting up LEDs
 leftRED=16
 WHITE=18
@@ -34,7 +37,9 @@ GPIO.setup(WHITE,GPIO.OUT)
 GPIO.setup(rightRED,GPIO.OUT)
 
 def backward1(dur):
-    print("Moving Forward")
+    print("Moving Back")
+    pwm1.start(duty)
+    pwm2.start(duty)
     GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
@@ -45,10 +50,14 @@ def backward1(dur):
     sleep(dur)
     GPIO.output(WHITE,GPIO.LOW)
     stopMotors()
+    pwm1.stop()
+    pwm2.stop()
     return
 
 def backward2():
-    print("Moving Forward")
+    print("Moving Back")
+    pwm1.start(duty)
+    pwm2.start(duty)
     GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(rightRED,GPIO.LOW)
@@ -60,7 +69,9 @@ def backward2():
     GPIO.output(Motor2E,GPIO.HIGH)
 
 def forward1(dur):
-    print("Moving Backward")
+    print("Moving Front")
+    pwm1.start(duty)
+    pwm2.start(duty)
     GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(Motor1A,GPIO.LOW)
     GPIO.output(Motor1B,GPIO.HIGH)
@@ -71,10 +82,14 @@ def forward1(dur):
     sleep(dur)
     GPIO.output(WHITE,GPIO.LOW)
     stopMotors()
+    pwm1.stop()
+    pwm2.stop()
     return
     
 def forward2():
-    print("Moving Backward")
+    print("Moving Front")
+    pwm1.start(duty)
+    pwm2.start(duty)
     GPIO.output(WHITE,GPIO.HIGH)
     GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(rightRED,GPIO.LOW)
@@ -135,6 +150,8 @@ def getData():
     motion = input("Next Step ")
     return motion
 
+duty = int(input("Enter speed of motor from 50%(min) to 100%(max)"))
+
 motion = input('''Instructions:
 Press K to use arrow keys for directions OR
 Use format <Direction><Duration> 
@@ -167,15 +184,25 @@ while (start[0] != 'X' and start[0] != 'x'):
                     if char == ord('q'):
                         break
                     elif char == curses.KEY_UP:
+                        pwm1.stop()
+                        pwm2.stop()
                         forward2()
                     elif char == curses.KEY_DOWN:
+                        pwm1.stop()
+                        pwm2.stop()
                         backward2()
                     elif char == curses.KEY_RIGHT:
+                        pwm1.stop()
+                        pwm2.stop()
                         turnRight2()
                     elif char == curses.KEY_LEFT:
+                        pwm1.stop()
+                        pwm2.stop()
                         turnLeft2()
                     elif char == 10:
                         stopMotors()
+                        pwm1.stop()
+                        pwm2.stop()
         finally:
             curses.nocbreak(); screen.keypad(0); curses.echo()
             curses.endwin()    
@@ -221,5 +248,7 @@ while (start[0] != 'X' and start[0] != 'x'):
 
 ###Ending steps
 print ("See You Next Time!!!")        
+pwm1.stop()
+pwm2.stop()
 GPIO.cleanup()
 
