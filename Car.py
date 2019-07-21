@@ -36,6 +36,15 @@ GPIO.setup(leftRED,GPIO.OUT)
 GPIO.setup(WHITE,GPIO.OUT)
 GPIO.setup(rightRED,GPIO.OUT)
 
+# Servo Motors use Pin 32 and 36
+S_UD = 32
+S_LR = 36
+
+GPIO.setup(S_UD,GPIO.OUT)
+GPIO.setup(S_LR,GPIO.OUT)
+
+## Functions start
+
 def backward1(dur):
     print("Moving Back")
     pwm1.start(duty)
@@ -146,9 +155,55 @@ def stopMotors():
     GPIO.output(Motor1E,GPIO.LOW)
     GPIO.output(Motor2E,GPIO.LOW)
 
+def servoUp():
+    print("Camera Focusing Up")
+    p = GPIO.PWM(S_UD,50)
+    p.start(0)
+    p.ChangeDutyCycle(1)
+    sleep(1)
+    p.stop()
+
+def servoDown():
+    print("Camera Facing Down")
+    p = GPIO.PWM(S_UD,50)
+    p.start(0)
+    p.ChangeDutyCycle(4.5)
+    sleep(1)
+    p.stop()
+
+def servoLeft():
+    print("Camera Moving Left")
+    p = GPIO.PWM(S_LR,50)
+    p.start(0)
+    p.ChangeDutyCycle(4.5)
+    sleep(1)
+    p.stop()
+
+def servoRight():
+    print("Camera Moving Right")
+    p = GPIO.PWM(S_LR,50)
+    p.start(0)
+    p.ChangeDutyCycle(1.5)
+    sleep(1)
+    p.stop()
+
+def servoReset():
+    print("Camera resetting")
+    p1 = GPIO.PWM(S_LR,50)
+    p2 = GPIO.PWM(S_UD,50)
+    p1.start(0)
+    p2.start(0)
+    p1.ChangeDutyCycle(3)
+    p2.ChangeDutyCycle(3)
+    sleep(1)
+    p1.stop()
+    p2.stop()
+
 def getData():
     motion = input("Next Step ")
     return motion
+
+## Functions end
 
 duty = int(input("Enter speed of motor from 50%(min) to 100%(max)"))
 
@@ -156,6 +211,7 @@ motion = input('''Instructions:
 Press K to use arrow keys for directions OR
 Use format <Direction><Duration> 
 Direction: F/B/L/R 
+Press C to direct camera
 Enter S to repeat
 Enter X to exit
 ''')
@@ -206,6 +262,32 @@ while (start[0] != 'X' and start[0] != 'x'):
         finally:
             curses.nocbreak(); screen.keypad(0); curses.echo()
             curses.endwin()    
+
+    elif (start[0] == 'C' or start[0] == 'c'):
+    ###Instant key usage for setting Camera direction
+        screen =curses.initscr()
+        curses.noecho()
+        curses.cbreak()
+        screen.keypad(True)
+        try:
+            while True:
+                print("Press q to exit arrow based operation")
+                char = screen.getch()
+                if char == ord('q'):
+                    break
+                elif char == curses.KEY_UP:
+                    servoUp()
+                elif char == curses.KEY_DOWN:
+                    servoDown()
+                elif char == curses.KEY_RIGHT:
+                    servoRight()
+                elif char == curses.KEY_LEFT:
+                    servoLeft()
+                elif char == 10:
+                    servoReset()
+        finally:
+            curses.nocbreak(); screen.keypad(0); curses.echo()
+            curses.endwin()
 
     else:
     ###Forward step
