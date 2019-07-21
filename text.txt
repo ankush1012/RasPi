@@ -1,0 +1,22 @@
+RasPi Pin Layout
+
+01 - Power 3.3 Servo      02
+03                                     04 - Fan
+05                                     06 - Ground Fan
+07                                     08
+09                                     10
+11 - ENB                           12
+13 - IN4B                         14
+15 - IN3B                         16 - Red LED
+17                                     18 - Yellow LED
+19                                     20 - Ground LED
+21                                     22 - Blue LED
+23                                    24
+25                                    26
+27                                    28
+29                                    30
+31 - IN1A                         32 - Servo 1 (Up Down)
+33 - IN2A                        34
+35 - ENA                         36 - Servo 2 (Left Right)
+37                                     38
+39 - Ground Motors      40
