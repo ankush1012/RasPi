@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 import time
 import curses
+from subprocess import call
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -110,12 +111,14 @@ def turnRight1(dur):
     print("Turning Right")
     GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(rightRED,GPIO.HIGH)
+    pwm1.start(duty)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.HIGH)
     time.sleep(dur)
     GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.LOW)
+    pwm1.stop()
     return
     
 def turnRight2():
@@ -123,6 +126,7 @@ def turnRight2():
     GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(rightRED,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.LOW)
+    pwm1.start(duty)
     GPIO.output(Motor1A,GPIO.HIGH)
     GPIO.output(Motor1B,GPIO.LOW)
     GPIO.output(Motor1E,GPIO.HIGH)
@@ -131,12 +135,14 @@ def turnLeft1(dur):
     print("Turning Left")
     GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(leftRED,GPIO.HIGH)
+    pwm2.start(duty)
     GPIO.output(Motor2A,GPIO.LOW)
     GPIO.output(Motor2B,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.HIGH)
     time.sleep(dur)
     GPIO.output(leftRED,GPIO.LOW)
     GPIO.output(Motor2E,GPIO.LOW)
+    pwm2.stop()
     return
     
 def turnLeft2():
@@ -144,6 +150,7 @@ def turnLeft2():
     GPIO.output(rightRED,GPIO.LOW)
     GPIO.output(leftRED,GPIO.HIGH)
     GPIO.output(Motor1E,GPIO.LOW)
+    pwm2.start(duty)
     GPIO.output(Motor2A,GPIO.LOW)
     GPIO.output(Motor2B,GPIO.HIGH)
     GPIO.output(Motor2E,GPIO.HIGH)
@@ -239,7 +246,7 @@ D for Distance from obstruction
 Press K to start
 Enter X to exit
 ''')
-
+i=0
 if (motion != 'k' and motion != 'K' and motion != 'X' and motion != 'x'):
     print("Wrong Option...Exiting")
     motion='X'
@@ -297,11 +304,23 @@ while (motion != 'X' and motion != 'x'):
                             dc = 4.5
                     elif char == ord('d'):
                         run=True
+                        count = 0
                         while run == True:
                             dist = distance()
                             if (dist < 1500):
                                 run=False
+                            else:
+                                count = count + 1
+                                if (count == 3):
+                                    run=False
                         print ("Measured Distance = %.1f cm" % dist)
+                    elif char == ord('a'):
+                        stopMotors()
+                        pwm1.stop()
+                        pwm2.stop()
+                        print("Analysing the pic now...")
+                        cmd1="/home/pi/pyth/imageAnalysis.sh"
+                        call(cmd1,shell=True)
                     elif char == 10:
                         lightOff()
                         stopMotors()
@@ -309,6 +328,8 @@ while (motion != 'X' and motion != 'x'):
                         pwm2.stop()
                         servoReset()
                         dc = 3
+                    #screen.addstr(i,0,"")
+                    #i+=1
         finally:
             curses.nocbreak(); screen.keypad(0); curses.echo()
             curses.endwin()
